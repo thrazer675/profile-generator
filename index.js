@@ -4,10 +4,9 @@ const util = require("util");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const html = require("./src/htmlTemp");
+const html = require("./src/htmlTemplate");
 const validator = require("email-validator");
 
-// async functions
 const writeFileAsync = util.promisify(fs.writeFile);
 const appendFileAsync = util.promisify(fs.appendFile);
 
@@ -16,9 +15,8 @@ let teamString = ``;
 
 console.clear();
 console.log("---------------------------------------------");
-console.log("Team Portfolio Generator by nosremetnarg")
+console.log("Portfolio Generator by thrazer675")
 
-// Main function to run application
 async function main() {
     try {
         await prompt()
@@ -31,14 +29,14 @@ async function main() {
 
         console.clear();
         console.log("---------------------------------------------");
-        console.log("Generating index.html file....");
+        console.log("Creating index.html file....");
         console.log("---------------------------------------------");
 
         writeFileAsync("./dist/index.html", finalHtml);
 
         console.clear();
         console.log("---------------------------------------------");
-        console.log("index.html file created successfully");
+        console.log("index.html file successfully created!");
         console.log("---------------------------------------------");
 
     } catch (err) {
@@ -46,9 +44,8 @@ async function main() {
     }
 }
 
-// Inquirer prompts to collect user data
 async function prompt() {
-    let responseDone = "";
+    let responseOver = "";
 
     do {
         try {
@@ -57,7 +54,7 @@ async function prompt() {
                 {
                     type: "input",
                     name: "name",
-                    message: "What is employee's name?",
+                    message: "Enter employee's name:",
                     validate: function validateName(name) {
                         return name !== "";
                     }
@@ -73,8 +70,7 @@ async function prompt() {
                 {
                     type: "input",
                     name: "email",
-                    message: "Enter employee's email address: ",
-                    // validation using email-validator
+                    message: "Enter employee's email: ",
                     validate: function validateName(name) {
                         return validator.validate(name);
                     }
@@ -82,7 +78,7 @@ async function prompt() {
                 {
                     type: "list",
                     name: "role",
-                    message: "What is the employee's role: ",
+                    message: "Enter the employee's role: ",
                     choices: [
                         "Engineer",
                         "Intern",
@@ -91,64 +87,60 @@ async function prompt() {
                 }
             ]);
 
-            let response2 = ""
+            let answer = ""
 
             if (response.role === "Engineer") {
-                response2 = await inquirer.prompt([{
+                answer = await inquirer.prompt([{
                     type: "input",
                     name: "x",
-                    message: "What is the employee's github username?: ",
+                    message: "Enter the employee's github username: ",
                     validate: function validateName(name){
                         return name !== "";
                     },
                 }, ]);
 
-                // add to team Arr
-                const engineer = new Engineer(response.name, response.id, response.email, response2.x);
+                const engineer = new Engineer(response.name, response.id, response.email, answer.x);
                 teamArray.push(engineer);
             
             } else if (response.role === "Manager") {
-                response2 = await inquirer.prompt([{
+                answer = await inquirer.prompt([{
                     type: "input",
                     name: "x",
-                    message: "What is the employee's office number?: ",
+                    message: "Enter the employee's office number: ",
                     validate: function validateName(name){
                         return name !== "";
                     },
                 }, ]);
 
-                // add to team Arr
-                const manager = new Manager(response.name, response.id, response.email, response2.x);
+                const manager = new Manager(response.name, response.id, response.email, answer.x);
                 teamArray.push(manager);
 
             } else if (response.role === "Intern") {
-                response2 = await inquirer.prompt([{
+                answer = await inquirer.prompt([{
                     type: "input",
                     name: "x",
-                    message: "What school is employee attending: ",
+                    message: "In what school is the intern enrolled? ",
                     validate: function validateName(name){
                         return name !== "";
                     },
                 }, ]);
 
-                // add to team Arr
-                const intern = new Intern(response.name, response.id, response.email, response2.x);
+                const intern = new Intern(response.name, response.id, response.email, answer.x);
                 teamArray.push(intern);
             }
         } catch (err) {
             return console.log(err);
         }
-        responseDone = await inquirer.prompt([{
+        responseOver = await inquirer.prompt([{
             type: "list",
-            name: "finish",
-            message: "Do you want to continue?: ",
+            name: "complete",
+            message: "Keep Going? ",
             choices: [
                 "Yes",
                 "No"
             ]
         },]);
-    } while (responseDone.finish === "Yes");
+    } while (responseOver.complete === "Yes");
 }
 
-// initial program
 main();
